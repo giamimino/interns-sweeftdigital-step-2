@@ -1,4 +1,4 @@
-[Live demo](interns-sweeftdigital-step-2.vercel.app) · interns-sweeftdigital-step-2.vercel.app
+[Live demo](https://interns-sweeftdigital-step-2.vercel.app) · https://interns-sweeftdigital-step-2.vercel.app
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
