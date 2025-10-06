@@ -28,7 +28,7 @@ export default function InfiniteScroll({
     return () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-  }, []);
+  }, [animate]);
 
   return (
     <div

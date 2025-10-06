@@ -7,7 +7,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { History } from "@/types/zustand";
 import { useHistoryStore } from "@/zustand/useHistoryStore";
 import { useImagesStore } from "@/zustand/useImagesStore";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export default function Home() {
   const { images, setImages } = useImagesStore();
@@ -15,7 +15,8 @@ export default function Home() {
   const [searchValue, setSearchValue] = useState("");
   const [visibleCount, setVisibleCount] = useState(18)
   const debounceSearch = useDebounce(searchValue);
-  let length = 14
+  const [searchResult, setSearchResult] = useState<any[]>([])
+  const length = 14
   useEffect(() => {
     if (images.length > 0) return;
 
@@ -27,14 +28,16 @@ export default function Home() {
   const filteredImges = useMemo(() => {
     if (!images) return [];
     if (!debounceSearch) return images
-    return images.filter((i) =>
+    const cachedFilter = images.filter((i) =>
       (i.alt_description ?? "")
         .toLowerCase()
         .includes(debounceSearch.toLowerCase())
     );
-  }, [debounceSearch, images]);
+    const SearchResult = searchResult
+    return [...cachedFilter, ...SearchResult ]
+  }, [debounceSearch, images, searchResult]);
 
-  const fetchSearch = async (query: string) => {
+  const fetchSearch = useCallback(async (query: string) => {
     if (!query) return;
     const res = await fetch("/api/images/search", {
       method: "POST",
@@ -43,6 +46,7 @@ export default function Home() {
     });
     const data: { success: boolean; images: any[] } = await res.json();
     if (data.success) {
+      setSearchResult(data.images)
       const existingIds = new Set(images.map((img) => img.id));
       const newImages = [
         ...images,
@@ -66,7 +70,7 @@ export default function Home() {
 
       setHistory(newHistory);
     }
-  };
+  }, [history, images, setHistory, setImages])
 
   useEffect(() => {
     if (!debounceSearch) return;
@@ -77,7 +81,7 @@ export default function Home() {
     const scrollTop = window.scrollY;
     const windowHeight = window.innerHeight;
     const fullHeight = document.documentElement.scrollHeight;
-    const threshold = 150;
+    const threshold = 220;
 
     if (scrollTop + windowHeight >= fullHeight - threshold) {
       setVisibleCount(prev => prev + 6);
