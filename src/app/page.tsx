@@ -33,8 +33,7 @@ export default function Home() {
         .toLowerCase()
         .includes(debounceSearch.toLowerCase())
     );
-    const SearchResult = searchResult
-    return [...cachedFilter, ...SearchResult ]
+    return [...cachedFilter, ...searchResult ]
   }, [debounceSearch, images, searchResult]);
 
   const fetchSearch = useCallback(async (query: string) => {
